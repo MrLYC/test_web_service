@@ -43,8 +43,8 @@ deploy:
 
 deploy-here: dev-init
 	cp -n $(SRCPATH)/conf/upstart/web_service.conf /etc/init/
-	chown lyc:lyc $(ROOTPATH) -R
 	chmod 777 /etc/init/web_service.conf
+	chown lyc:lyc $(ROOTPATH) -R
 	start web_service
 
 remove:
