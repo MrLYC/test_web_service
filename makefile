@@ -2,6 +2,7 @@ ROOTPATH := .
 DEVPATH = $(ROOTPATH)/.dev
 DEVMKFILE := $(DEVPATH)/makefile
 SRCPATH := $(ROOTPATH)/web_service
+DEPPATH := /opt/test_web_service
 
 # ENV VARS
 PYENV := env PYTHONPATH=$(SRCPATH)
@@ -35,3 +36,18 @@ test: pylint
 
 requires: $(ROOTPATH)/requirements.txt
 	$(PIPINSTALL) -r $(ROOTPATH)/requirements.txt
+
+deploy:
+	cp -n $(ROOTPATH) $(DEPPATH) -rf
+	cd $(DEPPATH) && make -f $(DEPPATH)/makefile deploy-here
+
+deploy-here: dev-init
+	cp -n $(SRCPATH)/conf/upstart/web_service.conf /etc/init/
+	chown lyc:lyc $(ROOTPATH) -R
+	chmod 777 /etc/init/web_service.conf
+	start web_service
+
+remove:
+	stop web_service || true
+	rm /etc/init/web_service.conf || true
+	rm -rf /opt/test_web_service
